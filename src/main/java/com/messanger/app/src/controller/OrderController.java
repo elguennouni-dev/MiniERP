@@ -50,7 +50,6 @@ public class OrderController extends BaseHttpHandler {
                             RequestHelper.sendMessage(exchange, "Invalid query parameter", 400);
                         }
                     } else {
-                        // ✅ Get all orders
                         List<Order> orders = orderService.getAllOrders();
                         if (orders.isEmpty()) {
                             RequestHelper.sendMessage(exchange, "No orders in database", 404);
