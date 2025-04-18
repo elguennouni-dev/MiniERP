@@ -47,7 +47,6 @@ public class OrderController extends BaseHttpHandler {
                             }
 
                         } else {
-                            // ❌ Unrecognized query parameter
                             RequestHelper.sendMessage(exchange, "Invalid query parameter", 400);
                         }
                     } else {
@@ -62,7 +61,6 @@ public class OrderController extends BaseHttpHandler {
                     break;
 
                 case "POST":
-                    // ✅ Add new order
                     Order newOrder = RequestHelper.parseRequestBody(exchange, Order.class);
 
                     if (orderService.getOrderById(newOrder.getId()) != null) {
@@ -75,14 +73,12 @@ public class OrderController extends BaseHttpHandler {
                     break;
 
                 case "PUT":
-                    // ✅ Update existing order
                     Order updatedOrder = RequestHelper.parseRequestBody(exchange, Order.class);
                     orderService.updateOrder(updatedOrder);
                     RequestHelper.sendMessage(exchange, "Order updated", 200);
                     break;
 
                 case "DELETE":
-                    // ✅ Delete order by ID
                     if (query != null && query.contains("id=")) {
                         int id = Integer.parseInt(query.split("=")[1]);
                         orderService.deleteOrder(id);
@@ -93,7 +89,6 @@ public class OrderController extends BaseHttpHandler {
                     break;
 
                 default:
-                    // ❌ Method Not Allowed
                     exchange.sendResponseHeaders(405, -1);
                     break;
             }
