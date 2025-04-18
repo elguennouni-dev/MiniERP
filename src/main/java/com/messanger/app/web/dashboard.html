@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini ERP - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="dashboard.html">Mini ERP System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="dashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="products.html"><i class="bi bi-box"></i> Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="customers.html"><i class="bi bi-people"></i> Customers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="sales.html"><i class="bi bi-cart"></i> Sales Orders</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <h1>Dashboard</h1>
+        <div class="row mt-4">
+            <!-- Summary Cards -->
+            <div class="col-md-3 mb-3">
+                <div class="card border-primary">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-box"></i> Total Products</h5>
+                        <h2 class="card-text" id="totalProducts">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card border-success">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-people"></i> Total Customers</h5>
+                        <h2 class="card-text" id="totalCustomers">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card border-info">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-cart"></i> Total Orders</h5>
+                        <h2 class="card-text" id="totalOrders">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card border-warning">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-currency-dollar"></i> Total Sales</h5>
+                        <h2 class="card-text" id="totalSales">$0.00</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Low Stock Alert -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card border-danger">
+                    <div class="card-header bg-danger text-white">
+                        <h5><i class="bi bi-exclamation-triangle"></i> Low Stock Alerts</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped" id="lowStockTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Product Name</th>
+                                    <th>Category</th>
+                                    <th>Current Stock</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lowStockBody">
+                                <!-- Low stock items will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Sales -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5><i class="bi bi-clock-history"></i> Recent Sales</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped" id="recentSalesTable">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Total</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentSalesBody">
+                                <!-- Recent sales will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Check if localStorage is empty, initialize if needed
+        if (!localStorage.getItem('products')) {
+            const sampleProducts = [
+                { id: 'P001', name: 'Laptop', category: 'Electronics', price: 1200, stock: 15 },
+                { id: 'P002', name: 'Mouse', category: 'Accessories', price: 25, stock: 50 },
+                { id: 'P003', name: 'Keyboard', category: 'Accessories', price: 45, stock: 30 },
+                { id: 'P004', name: 'Monitor', category: 'Electronics', price: 200, stock: 5 },
+                { id: 'P005', name: 'Headphones', category: 'Audio', price: 80, stock: 3 }
+            ];
+            localStorage.setItem('products', JSON.stringify(sampleProducts));
+        }
+        
+        if (!localStorage.getItem('customers')) {
+            const sampleCustomers = [
+                { id: 'C001', name: 'John Doe', phone: '123-456-7890', email: 'john@example.com' },
+                { id: 'C002', name: 'Jane Smith', phone: '098-765-4321', email: 'jane@example.com' },
+                { id: 'C003', name: 'Robert Johnson', phone: '555-123-4567', email: 'robert@example.com' }
+            ];
+            localStorage.setItem('customers', JSON.stringify(sampleCustomers));
+        }
+        
+        if (!localStorage.getItem('orders')) {
+            const sampleOrders = [
+                { 
+                    id: 'O001', 
+                    customerId: 'C001', 
+                    date: '2025-04-15', 
+                    items: [
+                        { productId: 'P001', quantity: 1, price: 1200 },
+                        { productId: 'P002', quantity: 2, price: 25 }
+                    ],
+                    total: 1250
+                },
+                { 
+                    id: 'O002', 
+                    customerId: 'C002', 
+                    date: '2025-04-16', 
+                    items: [
+                        { productId: 'P004', quantity: 1, price: 200 },
+                        { productId: 'P005', quantity: 1, price: 80 }
+                    ],
+                    total: 280
+                }
+            ];
+            localStorage.setItem('orders', JSON.stringify(sampleOrders));
+        }
+
+        // Dashboard data loading
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDashboardStats();
+            loadLowStockItems();
+            loadRecentSales();
+        });
+
+        function updateDashboardStats() {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const customers = JSON.parse(localStorage.getItem('customers')) || [];
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            
+            // Calculate total sales
+            const totalSalesValue = orders.reduce((total, order) => total + order.total, 0);
+            
+            // Update UI
+            document.getElementById('totalProducts').textContent = products.length;
+            document.getElementById('totalCustomers').textContent = customers.length;
+            document.getElementById('totalOrders').textContent = orders.length;
+            document.getElementById('totalSales').textContent = '$' + totalSalesValue.toFixed(2);
+        }
+
+        function loadLowStockItems() {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const lowStockBody = document.getElementById('lowStockBody');
+            lowStockBody.innerHTML = '';
+            
+            // Filter products with low stock (less than 10)
+            const lowStockItems = products.filter(product => product.stock < 10);
+            
+            if (lowStockItems.length === 0) {
+                lowStockBody.innerHTML = '<tr><td colspan="4" class="text-center">No low stock items</td></tr>';
+                return;
+            }
+            
+            lowStockItems.forEach(product => {
+                const row = document.createElement('tr');
+                if (product.stock < 5) {
+                    row.classList.add('table-danger');
+                } else {
+                    row.classList.add('table-warning');
+                }
+                
+                row.innerHTML = `
+                    <td>${product.id}</td>
+                    <td>${product.name}</td>
+                    <td>${product.category}</td>
+                    <td>${product.stock}</td>
+                `;
+                lowStockBody.appendChild(row);
+            });
+        }
+
+        function loadRecentSales() {
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            const customers = JSON.parse(localStorage.getItem('customers')) || [];
+            const recentSalesBody = document.getElementById('recentSalesBody');
+            recentSalesBody.innerHTML = '';
+            
+            if (orders.length === 0) {
+                recentSalesBody.innerHTML = '<tr><td colspan="5" class="text-center">No sales records found</td></tr>';
+                return;
+            }
+            
+            // Sort by date (newest first) and take last 5
+            const recentOrders = [...orders].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+            
+            recentOrders.forEach(order => {
+                const customer = customers.find(c => c.id === order.customerId) || { name: 'Unknown' };
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${order.id}</td>
+                    <td>${customer.name}</td>
+                    <td>${order.date}</td>
+                    <td>$${order.total.toFixed(2)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info" onclick="viewOrderDetails('${order.id}')">View Details</button>
+                    </td>
+                `;
+                recentSalesBody.appendChild(row);
+            });
+        }
+
+        function viewOrderDetails(orderId) {
+            // In a real app, this would show order details
+            // For now, we'll redirect to the sales page
+            window.location.href = 'sales.html?view=' + orderId;
+        }
+    </script>
+</body>
+</html>

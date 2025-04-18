@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini ERP - Sales Orders</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="dashboard.html">Mini ERP System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="products.html"><i class="bi bi-box"></i> Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="customers.html"><i class="bi bi-people"></i> Customers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="sales.html"><i class="bi bi-cart"></i> Sales Orders</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Sales Orders</h1>
+            <button class="btn btn-primary" id="newOrderBtn">
+                <i class="bi bi-plus-circle"></i> Create New Order
+            </button>
+        </div>
+
+        <!-- Order List / Create Order Views -->
+        <div id="orderViews">
+            <!-- Order List View -->
+            <div id="orderListView">
+                <!-- Search and Filter -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="searchOrder" placeholder="Search orders...">
+                            <button class="btn btn-outline-secondary" type="button" id="searchBtn">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <label class="input-group-text" for="customerFilter">Customer</label>
+                            <select class="form-select" id="customerFilter">
+                                <option value="">All Customers</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <label class="input-group-text" for="dateFilter">Date</label>
+                            <input type="date" class="form-control" id="dateFilter">
+                            <button class="btn btn-outline-secondary" type="button" id="clearDateBtn">
+                                <i class="bi bi-x-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orders Table -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderTableBody">
+                            <!-- Orders will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Create Order View -->
+            <div id="createOrderView" style="display: none;">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">New Sales Order</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="orderForm">
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="orderId" class="form-label">Order ID</label>
+                                    <input type="text" class="form-control" id="orderId" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="orderDate" class="form-label">Date</label>
+                                    <input type="date" class="form-control" id="orderDate" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="orderCustomer" class="form-label">Customer</label>
+                                    <select class="form-select" id="orderCustomer" required>
+                                        <option value="">Select Customer</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Add Products Section -->
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">Add Products</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-5">
+                                <label for="productSelect" class="form-label">Product</label>
+                                <select class="form-select" id="productSelect">
+                                    <option value="">Select Product</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="productQuantity" class="form-label">Quantity</label>
+                                <input type="number" class="form-control" id="productQuantity" min="1" value="1">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="productPrice" class="form-label">Price</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="productPrice" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">&nbsp;</label>
+                                <button type="button" class="btn btn-success form-control" id="addProductBtn">
+                                    <i class="bi bi-plus-circle"></i> Add
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <small class="text-muted" id="productStock">Available stock: 0</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Items Table -->
+                <div class="card mb-4">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0">Order Items</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Product</th>
+                                        <th>Price</th>
+                                        <th>Quantity</th>
+                                        <th>Subtotal</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orderItemsBody">
+                                    <tr id="noItemsRow">
+                                        <td colspan="6" class="text-center">No items added to this order</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-dark">
+                                        <td colspan="4" class="text-end fw-bold">Total:</td>
+                                        <td class="fw-bold" id="orderTotal">$0.00</td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Actions -->
+                <div class="d-flex justify-content-end gap-2 mb-4">
+                    <button type="button" class="btn btn-secondary" id="cancelOrderBtn">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary" id="saveOrderBtn">
+                        <i class="bi bi-save"></i> Save Order
+                    </button>
+                </div>
+            </div>
+
+            <!-- View Order Details -->
+            <div id="viewOrderView" style="display: none;">
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Order Details</h5>
+                            <button type="button" class="btn btn-light btn-sm" id="backToListBtn">
+                                <i class="bi bi-arrow-left"></i> Back to List
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <p><strong>Order ID:</strong> <span id="viewOrderId"></span></p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>Date:</strong> <span id="viewOrderDate"></span></p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>Customer:</strong> <span id="viewOrderCustomer"></span></p>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Product</th>
+                                        <th>Price</th>
+                                        <th>Quantity</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="viewOrderItems">
+                                    <!-- Order items will be loaded here -->
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-dark">
+                                        <td colspan="4" class="text-end fw-bold">Total:</td>
+                                        <td class="fw-bold" id="viewOrderTotal">$0.00</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Print/Export Buttons -->
+                <div class="d-flex justify-content-end gap-2 mb-4">
+                    <button type="button" class="btn btn-outline-secondary" id="printOrderBtn">
+                        <i class="bi bi-printer"></i> Print
+                    </button>
+                    <button type="button" class="btn btn-danger" id="deleteOrderBtn">
+                        <i class="bi bi-trash"></i> Delete Order
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this order? This action cannot be undone.</p>
+                    <p>Order ID: <strong id="deleteOrderId"></strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // DOM Elements - Main Views
+        const orderListView = document.getElementById('orderListView');
+        const createOrderView = document.getElementById('createOrderView');
+        const viewOrderView = document.getElementById('viewOrderView');
+        
+        // DOM Elements - Order List
+        const orderTableBody = document.getElementById('orderTableBody');
+        const searchInput = document.getElementById('searchOrder');
+        const searchBtn = document.getElementById('searchBtn');
+        const customerFilter = document.getElementById('customerFilter');
+        const dateFilter = document.getElementById('dateFilter');
+        const clearDateBtn = document.getElementById('clearDateBtn');
+        
+        // DOM Elements - Create Order
+        const orderForm = document.getElementById('orderForm');
+        const orderId = document.getElementById('orderId');
+        const orderDate = document.getElementById('orderDate');
+        const orderCustomer = document.getElementById('orderCustomer');
+        const productSelect = document.getElementById('productSelect');
+        const productQuantity = document.getElementById('productQuantity');
+        const productPrice = document.getElementById('productPrice');
+        const productStock = document.getElementById('productStock');
+        const addProductBtn = document.getElementById('addProductBtn');
+        const orderItemsBody = document.getElementById('orderItemsBody');
+        const noItemsRow = document.getElementById('noItemsRow');
+        const orderTotal = document.getElementById('orderTotal');
+        
+        // DOM Elements - View Order
+        const viewOrderId = document.getElementById('viewOrderId');
+        const viewOrderDate = document.getElementById('viewOrderDate');
+        const viewOrderCustomer = document.getElementById('viewOrderCustomer');
+        const viewOrderItems = document.getElementById('viewOrderItems');
+        const viewOrderTotal = document.getElementById('viewOrderTotal');
+        
+        // DOM Elements - Buttons
+        const newOrderBtn = document.getElementById('newOrderBtn');
+        const cancelOrderBtn = document.getElementById('cancelOrderBtn');
+        const saveOrderBtn = document.getElementById('saveOrderBtn');
+        const backToListBtn = document.getElementById('backToListBtn');
+        const printOrderBtn = document.getElementById('printOrderBtn');
+        const deleteOrderBtn = document.getElementById('deleteOrderBtn');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        
+        // Bootstrap Modals
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        
+        // Global variables
+        let orderItems = [];
+        let currentEditingOrder = null;
+        let products = [];
+        let customers = [];
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load data from localStorage
+            loadData();
+            
+            // Set today's date as default
+            orderDate.valueAsDate = new Date();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Check URL for view parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const viewOrderId = urlParams.get('view');
+            if (viewOrderId) {
+                viewOrder(viewOrderId);
+            } else {
+                loadOrders();
+            }
+        });
+        
+        // Load data from localStorage
+        function loadData() {
+            // Load products, customers, and orders
+            products = JSON.parse(localStorage.getItem('products')) || [];
+            customers = JSON.parse(localStorage.getItem('customers')) || [];
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            
+            // Populate customer filter and dropdown
+            populateCustomerDropdowns();
+            
+            // Populate product dropdown
+            populateProductDropdown();
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            // Order list view
+            newOrderBtn.addEventListener('click', createNewOrder);
+            searchBtn.addEventListener('click', loadOrders);
+            searchInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') loadOrders();
+            });
+            customerFilter.addEventListener('change', loadOrders);
+            dateFilter.addEventListener('change', loadOrders);
+                        // Clear date filter and reload orders
+                        dateFilter.value = '';
+            loadOrders();
+        };
+
+        // Create order view
+        cancelOrderBtn.addEventListener('click', cancelOrder);
+        saveOrderBtn.addEventListener('click', saveOrder);
+        productSelect.addEventListener('change', updateProductDetails);
+        addProductBtn.addEventListener('click', addProductToOrder);
+
+        // View order details
+        backToListBtn.addEventListener('click', showOrderListView);
+        printOrderBtn.addEventListener('click', printOrder);
+        deleteOrderBtn.addEventListener('click', showDeleteConfirmation);
+        confirmDeleteBtn.addEventListener('click', deleteOrder);
+    
+
+    // Populate customer dropdowns
+    function populateCustomerDropdowns() {
+        // Clear existing options
+        orderCustomer.innerHTML = '<option value="">Select Customer</option>';
+        customerFilter.innerHTML = '<option value="">All Customers</option>';
+
+        // Add customers to dropdowns
+        customers.forEach(customer => {
+            const option1 = document.createElement('option');
+            option1.value = customer.id;
+            option1.textContent = customer.name;
+            orderCustomer.appendChild(option1);
+
+            const option2 = document.createElement('option');
+            option2.value = customer.id;
+            option2.textContent = customer.name;
+            customerFilter.appendChild(option2);
+        });
+    }
+
+    // Populate product dropdown
+    function populateProductDropdown() {
+        productSelect.innerHTML = '<option value="">Select Product</option>';
+        products.forEach(product => {
+            const option = document.createElement('option');
+            option.value = product.id;
+            option.textContent = `${product.name} (${product.sku})`;
+            productSelect.appendChild(option);
+        });
+    }
+
+    // Update product details when product is selected
+    function updateProductDetails() {
+        const productId = productSelect.value;
+        if (!productId) {
+            productPrice.value = '';
+            productStock.textContent = 'Available stock: 0';
+            return;
+        }
+
+        const product = products.find(p => p.id == productId);
+        if (product) {
+            productPrice.value = product.price;
+            productStock.textContent = `Available stock: ${product.stock}`;
+        }
+    }
+
+    // Add product to order
+    function addProductToOrder() {
+        const productId = productSelect.value;
+        const quantity = parseInt(productQuantity.value);
+        
+        if (!productId || isNaN(quantity) || quantity <= 0) {
+            alert('Please select a product and enter a valid quantity');
+            return;
+        }
+
+        const product = products.find(p => p.id == productId);
+        if (!product) return;
+
+        // Check if product already exists in order
+        const existingItem = orderItems.find(item => item.productId == productId);
+        if (existingItem) {
+            existingItem.quantity += quantity;
+        } else {
+            orderItems.push({
+                productId: product.id,
+                name: product.name,
+                price: parseFloat(product.price),
+                quantity: quantity
+            });
+        }
+
+        // Update UI
+        renderOrderItems();
+        updateOrderTotal();
+        
+        // Reset form
+        productSelect.value = '';
+        productQuantity.value = 1;
+        productPrice.value = '';
+        productStock.textContent = 'Available stock: 0';
+    }
+
+    // Render order items in the table
+    function renderOrderItems() {
+        if (orderItems.length === 0) {
+            noItemsRow.style.display = '';
+            orderItemsBody.innerHTML = '';
+            orderItemsBody.appendChild(noItemsRow);
+            return;
+        }
+
+        noItemsRow.style.display = 'none';
+        orderItemsBody.innerHTML = '';
+
+        orderItems.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.productId}</td>
+                <td>${item.name}</td>
+                <td>$${item.price.toFixed(2)}</td>
+                <td>
+                    <div class="input-group">
+                        <input type="number" class="form-control quantity-input" value="${item.quantity}" min="1" data-index="${index}">
+                        <button class="btn btn-outline-danger remove-item-btn" type="button" data-index="${index}">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </td>
+                <td>$${(item.price * item.quantity).toFixed(2)}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm remove-btn" data-index="${index}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            `;
+            orderItemsBody.appendChild(row);
+        });
+
+        // Add event listeners to quantity inputs and remove buttons
+        document.querySelectorAll('.quantity-input').forEach(input => {
+            input.addEventListener('change', function() {
+                const index = parseInt(this.dataset.index);
+                const newQuantity = parseInt(this.value);
+                if (newQuantity > 0) {
+                    orderItems[index].quantity = newQuantity;
+                    renderOrderItems();
+                    updateOrderTotal();
+                }
+            });
+        });
+
+        document.querySelectorAll('.remove-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const index = parseInt(this.dataset.index);
+                orderItems.splice(index, 1);
+                renderOrderItems();
+                updateOrderTotal();
+            });
+        });
+    }
+
+    // Update order total
+    function updateOrderTotal() {
+        const total = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        orderTotal.textContent = `$${total.toFixed(2)}`;
+    }
+
+    // Create new order
+    function createNewOrder() {
+        // Generate new order ID
+        const orders = JSON.parse(localStorage.getItem('orders')) || [];
+        const newId = orders.length > 0 ? Math.max(...orders.map(o => o.id)) + 1 : 1;
+        
+        // Reset form
+        orderId.value = newId;
+        orderDate.valueAsDate = new Date();
+        orderCustomer.value = '';
+        orderItems = [];
+        renderOrderItems();
+        updateOrderTotal();
+        
+        // Switch to create order view
+        orderListView.style.display = 'none';
+        viewOrderView.style.display = 'none';
+        createOrderView.style.display = 'block';
+        
+        // Set focus to customer dropdown
+        orderCustomer.focus();
+    }
+
+    // Save order
+    function saveOrder() {
+        // Validate form
+        if (!orderCustomer.value) {
+            alert('Please select a customer');
+            return;
+        }
+        
+        if (orderItems.length === 0) {
+            alert('Please add at least one product to the order');
+            return;
+        }
+
+        // Get customer details
+        const customer = customers.find(c => c.id == orderCustomer.value);
+        if (!customer) {
+            alert('Invalid customer selected');
+            return;
+        }
+
+        // Calculate total
+        const total = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+        // Create order object
+        const order = {
+            id: parseInt(orderId.value),
+            customerId: customer.id,
+            customerName: customer.name,
+            date: orderDate.value,
+            items: [...orderItems],
+            total: total
+        };
+
+        // Save to localStorage
+        const orders = JSON.parse(localStorage.getItem('orders')) || [];
+        
+        if (currentEditingOrder) {
+            // Update existing order
+            const index = orders.findIndex(o => o.id == currentEditingOrder);
+            if (index !== -1) {
+                orders[index] = order;
+            }
+        } else {
+            // Add new order
+            orders.push(order);
+        }
+        
+        localStorage.setItem('orders', JSON.stringify(orders));
+        
+        // Show order list view
+        showOrderListView();
+        loadOrders();
+    }
+
+    // Cancel order creation/editing
+    function cancelOrder() {
+        if (confirm('Are you sure you want to cancel? Any unsaved changes will be lost.')) {
+            showOrderListView();
+        }
+    }
+
+    // Load orders into the table
+    function loadOrders() {
+        const orders = JSON.parse(localStorage.getItem('orders')) || [];
+        let filteredOrders = [...orders];
+
+        // Apply search filter
+        const searchTerm = searchInput.value.toLowerCase();
+        if (searchTerm) {
+            filteredOrders = filteredOrders.filter(order => 
+                order.id.toString().includes(searchTerm) || 
+                order.customerName.toLowerCase().includes(searchTerm));
+        }
+
+        // Apply customer filter
+        const customerId = customerFilter.value;
+        if (customerId) {
+            filteredOrders = filteredOrders.filter(order => order.customerId == customerId);
+        }
+
+        // Apply date filter
+        const dateFilterValue = dateFilter.value;
+        if (dateFilterValue) {
+            filteredOrders = filteredOrders.filter(order => order.date === dateFilterValue);
+        }
+
+        // Sort by date (newest first)
+        filteredOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        // Render orders
+        orderTableBody.innerHTML = '';
+        
+        if (filteredOrders.length === 0) {
+            const row = document.createElement('tr');
+            row.innerHTML = '<td colspan="6" class="text-center">No orders found</td>';
+            orderTableBody.appendChild(row);
+            return;
+        }
+
+        filteredOrders.forEach(order => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${order.id}</td>
+                <td>${order.customerName}</td>
+                <td>${formatDate(order.date)}</td>
+                <td>${order.items.length}</td>
+                <td>$${order.total.toFixed(2)}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary view-order-btn" data-id="${order.id}">
+                        <i class="bi bi-eye"></i> View
+                    </button>
+                </td>
+            `;
+            orderTableBody.appendChild(row);
+        });
+
+        // Add event listeners to view buttons
+        document.querySelectorAll('.view-order-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                viewOrder(parseInt(this.dataset.id));
+            });
+        });
+    }
+
+    // Format date for display
+    function formatDate(dateString) {
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+    }
+
+    // View order details
+    function viewOrder(orderId) {
+        const orders = JSON.parse(localStorage.getItem('orders')) || [];
+        const order = orders.find(o => o.id == orderId);
+        
+        if (!order) {
+            alert('Order not found');
+            showOrderListView();
+            return;
+        }
+
+        // Update URL
+        const url = new URL(window.location);
+        url.searchParams.set('view', orderId);
+        window.history.pushState({}, '', url);
+
+        // Display order details
+        viewOrderId.textContent = order.id;
+        viewOrderDate.textContent = formatDate(order.date);
+        viewOrderCustomer.textContent = order.customerName;
+        
+        // Display order items
+        viewOrderItems.innerHTML = '';
+        order.items.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.productId}</td>
+                <td>${item.name}</td>
+                <td>$${item.price.toFixed(2)}</td>
+                <td>${item.quantity}</td>
+                <td>$${(item.price * item.quantity).toFixed(2)}</td>
+            `;
+            viewOrderItems.appendChild(row);
+        });
+        
+        // Display total
+        viewOrderTotal.textContent = `$${order.total.toFixed(2)}`;
+
+        // Show view order view
+        orderListView.style.display = 'none';
+        createOrderView.style.display = 'none';
+        viewOrderView.style.display = 'block';
+    }
+
+    // Show order list view
+    function showOrderListView() {
+        // Clear URL parameter
+        const url = new URL(window.location);
+        url.searchParams.delete('view');
+        window.history.pushState({}, '', url);
+
+        // Reset current editing order
+        currentEditingOrder = null;
+        
+        // Show order list view
+        orderListView.style.display = 'block';
+        createOrderView.style.display = 'none';
+        viewOrderView.style.display = 'none';
+        
+        // Reload orders
+        loadOrders();
+    }
+
+    // Print order
+    function printOrder() {
+        window.print();
+    }
+
+    // Show delete confirmation modal
+    function showDeleteConfirmation() {
+        const orderId = viewOrderId.textContent;
+        document.getElementById('deleteOrderId').textContent = orderId;
+        deleteModal.show();
+    }
+
+    // Delete order
+    function deleteOrder() {
+        const orderId = parseInt(viewOrderId.textContent);
+        const orders = JSON.parse(localStorage.getItem('orders')) || [];
+        const updatedOrders = orders.filter(order => order.id !== orderId);
+        
+        localStorage.setItem('orders', JSON.stringify(updatedOrders));
+        deleteModal.hide();
+        showOrderListView();
+    }
+</script>
+</body>
+</html>
