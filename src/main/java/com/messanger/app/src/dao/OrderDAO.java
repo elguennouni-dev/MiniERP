@@ -1,6 +1,8 @@
 package com.messanger.app.src.dao;
 
+import com.messanger.app.src.model.Customer;
 import com.messanger.app.src.model.Order;
+import com.messanger.app.src.model.OrderItem;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -47,6 +49,23 @@ public class OrderDAO {
             }
         }
         return orders;
+    }
+
+    public List<Order> getOrdersByCustomerId(int id) throws SQLException {
+        List<Order> orders = new ArrayList<>();
+        String sql = "SELECT * FROM order WHERE customer_id=?";
+        CustomerDAO customerDAO = new CustomerDAO(connection);
+        OrderItemDAO orderItemDAO = new OrderItemDAO(connection);
+        Customer customer = customerDAO.getCustomerById(id);
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1,id);
+            ResultSet set = statement.executeQuery();
+            while(set.next()){
+                // order_id / customer_id / order_date / total_price
+                List<OrderItem> items = orderItemDAO.
+                orders.add(new Order(set.getInt("order_id"),customer,set.getDate("order_date"),set.getBigDecimal("total_price")));
+            }
+        }
     }
 
     public void updateOrder(Order order) throws SQLException {

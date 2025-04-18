@@ -22,6 +22,10 @@ public class OrderService {
         return orderDAO.getAllOrders();
     }
 
+    public List<Order> getOrdersByCustomerId(int id) throws SQLException {
+        return orderDAO
+    }
+
     public void updateOrder(Order newOrder) throws SQLException {
         orderDAO.updateOrder(newOrder);
     }

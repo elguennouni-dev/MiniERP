@@ -37,6 +37,19 @@ public class CustomerDAO {
         return null;
     }
 
+    public List<Customer> finByCustomerName(String name) throws SQLException {
+        List<Customer> customers = new ArrayList<>();
+        String sql = "SELECT * FROM customer WHERE name LIKE ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1,"%"+name+"%");
+            ResultSet set = statement.executeQuery();
+            while(set.next()) {
+                customers.add(new Customer(set.getInt("customer_id"),set.getString("name"),set.getString("phone"),set.getString("email")));
+            }
+        }
+        return customers;
+    }
+
     public List<Customer> getAllCustomers() throws SQLException {
         List<Customer> customers = new ArrayList<>();
         String sql = "SELECT * FROM customer";

@@ -25,17 +25,30 @@ public class ProductDAO {
     }
 
     public Product getProductById(int id) throws SQLException {
-        String sql = "SELECT * FROM product WHERE id = ?";
+        String sql = "SELECT * FROM product WHERE product_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1,id);
             ResultSet set = statement.executeQuery();
             if(set.next()) {
                 Product product = new Product(set.getString("name"),set.getString("category"),set.getBigDecimal("price"),set.getInt("stock_qty"));
-                product.setId(set.getInt("id"));
+                product.setId(set.getInt("product_id"));
                 return product;
             }
         }
         return null;
+    }
+
+    public List<Product> findProductByName(String name) throws SQLException {
+        List<Product> products = new ArrayList<>();
+        String sql = "SELECT * FROM product WHERE name LIKE ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1,"%"+name+"%");
+            ResultSet set = statement.executeQuery();
+            while(set.next()){
+                products.add(new Product(set.getInt("product_id"),set.getString("name"),set.getString("category"),set.getBigDecimal("price"),set.getInt("stock_qty")));
+            }
+        }
+        return products;
     }
 
     public List<Product> getAllProducts() throws SQLException {
@@ -45,7 +58,7 @@ public class ProductDAO {
             ResultSet set = statement.executeQuery(sql);
             while(set.next()) {
                 Product product = new Product(set.getString("name"),set.getString("category"),set.getBigDecimal("price"),set.getInt("stock_qty"));
-                product.setId(set.getInt("id"));
+                product.setId(set.getInt("product_id"));
                 products.add(product);
             }
         }
@@ -53,7 +66,7 @@ public class ProductDAO {
     }
 
     public void updateProduct(Product product) throws SQLException {
-        String sql = "UPDATE product SET (name=?,category=?,price=?,stock_qty=?) WHERE id=?";
+        String sql = "UPDATE product SET name=?,category=?,price=?,stock_qty=? WHERE product_id=?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, product.getName());
             statement.setString(2, product.getCategory());
@@ -65,7 +78,7 @@ public class ProductDAO {
     }
 
     public void deleteProduct(int id) throws SQLException {
-        String sql = "DELETE * FROM product WHERE id = ?";
+        String sql = "DELETE FROM product WHERE product_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, id);
             statement.executeUpdate();

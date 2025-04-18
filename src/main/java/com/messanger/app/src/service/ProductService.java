@@ -14,8 +14,16 @@ public class ProductService {
         this.productDAO = new ProductDAO(connection);
     }
 
+    public void addProduct(Product product) throws SQLException {
+        productDAO.addProduct(product);
+    }
+
     public Product getProductById(int id) throws SQLException {
         return productDAO.getProductById(id);
+    }
+
+    public List<Product> searchProductsByName(String name) throws SQLException {
+        return productDAO.findProductByName(name);
     }
 
     public List<Product> getAllProducts() throws SQLException {

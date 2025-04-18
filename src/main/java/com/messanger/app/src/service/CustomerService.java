@@ -23,6 +23,10 @@ public class CustomerService {
         return customerDAO.getCustomerById(id);
     }
 
+    public List<Customer> getByCustomerName(String name) throws SQLException {
+        return customerDAO.finByCustomerName(name);
+    }
+
     public List<Customer> getAllCustomers() throws SQLException {
         return customerDAO.getAllCustomers();
     }
