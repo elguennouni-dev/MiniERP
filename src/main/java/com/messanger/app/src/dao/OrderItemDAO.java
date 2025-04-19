@@ -1,11 +1,9 @@
 package com.messanger.app.src.dao;
 
-import com.messanger.app.src.model.Customer;
 import com.messanger.app.src.model.Order;
 import com.messanger.app.src.model.OrderItem;
 import com.messanger.app.src.model.Product;
 
-import javax.xml.transform.Result;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
@@ -30,7 +28,6 @@ public class OrderItemDAO {
     }
 
     public OrderItem getOrderItemById(int id) throws SQLException {
-        // order_item_id, order_id, product_id, quantity, price_at_order_time
         String sql = "SELECT * FROM orderitem WHERE order_item_id=?";
         ProductDAO productDAO = new ProductDAO(connection);
         OrderDAO orderDAO = new OrderDAO(connection);
@@ -53,8 +50,39 @@ public class OrderItemDAO {
         }
     }
 
+
+    public List<OrderItem> getOrderItemsByOrderID(int orderId) throws SQLException {
+        List<OrderItem> items = new ArrayList<>();
+        String sql = "SELECT * FROM orderitem WHERE order_id=?";
+
+        ProductDAO productDAO = new ProductDAO(connection);
+        OrderDAO orderDAO = new OrderDAO(connection);
+
+        Order order = orderDAO.getOrderById(orderId);
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, orderId);
+            ResultSet set = statement.executeQuery();
+
+            while (set.next()) {
+                int orderItemId = set.getInt("order_item_id");
+                int productId = set.getInt("product_id");
+                int quantity = set.getInt("quantity");
+                BigDecimal priceAtOrder = set.getBigDecimal("price_at_order_time");
+
+                Product product = productDAO.getProductById(productId);
+
+                OrderItem orderItem = new OrderItem(orderItemId, order, product, quantity, priceAtOrder);
+                items.add(orderItem);
+            }
+        }
+
+        return items;
+    }
+
+
+
     public List<OrderItem> getAllOrderItems() throws SQLException {
-        // order_item_id, order_id, product_id, quantity, price_at_order_time
         String sql = "SELECT * FROM orderitem";
         List<OrderItem> items = new ArrayList<>();
         try (Statement statement = connection.createStatement()) {
@@ -68,7 +96,6 @@ public class OrderItemDAO {
     }
 
     public void updateOrderItem(OrderItem item) throws SQLException {
-        // order_item_id, order_id, product_id, quantity, price_at_order_time
         String sql = "UPDATE orderitem SET order_id=?, product_id=?, quantity=?, price_at_order_time=? WHERE order_item_id=?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, item.getOrder().getId());
@@ -82,7 +109,6 @@ public class OrderItemDAO {
     }
 
     public void deleteOrderItem(int id) throws SQLException {
-        // order_item_id, order_id, product_id, quantity, price_at_order_time
         String sql = "DELETE FROM orderitem WHERE order_item_id=?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1,id);
