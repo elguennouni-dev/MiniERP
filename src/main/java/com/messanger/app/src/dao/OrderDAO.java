@@ -1,5 +1,7 @@
 package com.messanger.app.src.dao;
 
+import com.messanger.app.src.dto.OrderDTO;
+import com.messanger.app.src.dto.OrderItemDTO;
 import com.messanger.app.src.model.Customer;
 import com.messanger.app.src.model.Order;
 import com.messanger.app.src.model.OrderItem;
@@ -16,15 +18,36 @@ public class OrderDAO {
         this.connection = connection;
     }
 
-    public void addOrder(Order order) throws SQLException {
-        String sql = "INSERT INTO orders(customer_id, order_date, total_price) VALUES(?,?,?)";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1,order.getCustomer().getId());
-            statement.setDate(2,order.getOrderDate());
-            statement.setBigDecimal(3, order.getTotalPrice());
-            statement.executeUpdate();
+    public void addOrder(OrderDTO orderDTO) throws SQLException {
+        String orderSql = "INSERT INTO orders(customer_id, order_date, total_price) VALUES (?, ?, ?)";
+
+        try (PreparedStatement orderStmt = connection.prepareStatement(orderSql, Statement.RETURN_GENERATED_KEYS)) {
+            orderStmt.setInt(1, orderDTO.getCustomerId());
+            orderStmt.setDate(2, orderDTO.getOrderDate());
+            orderStmt.setBigDecimal(3, orderDTO.getTotalPrice());
+            orderStmt.executeUpdate();
+
+            ResultSet generatedKeys = orderStmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                int orderId = generatedKeys.getInt(1);
+
+                String itemSql = "INSERT INTO orderitem(order_id, product_id, quantity, price_at_order_time) VALUES (?, ?, ?, ?)";
+                try (PreparedStatement itemStmt = connection.prepareStatement(itemSql)) {
+                    for (OrderItemDTO itemDTO : orderDTO.getOrderItems()) {
+                        itemStmt.setInt(1, orderId);
+                        itemStmt.setInt(2, itemDTO.getProductId());
+                        itemStmt.setInt(3, itemDTO.getQuantity());
+                        itemStmt.setBigDecimal(4, itemDTO.getPriceAtOrderTime());
+                        itemStmt.addBatch();
+                    }
+                    itemStmt.executeBatch();
+                }
+            } else {
+                throw new SQLException("Failed to retrieve generated order ID.");
+            }
         }
     }
+
 
     public Order getOrderById(int id) throws SQLException {
         String sql = "SELECT * FROM orders WHERE order_id=?";

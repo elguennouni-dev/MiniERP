@@ -1,6 +1,7 @@
 package com.messanger.app.src.service;
 
 import com.messanger.app.src.dao.OrderDAO;
+import com.messanger.app.src.dto.OrderDTO;
 import com.messanger.app.src.model.Order;
 
 import java.sql.Connection;
@@ -22,12 +23,12 @@ public class OrderService {
         return orderDAO.getAllOrders();
     }
 
-    public void addOrder(Order order) throws SQLException {
+    public void addOrder(OrderDTO order) throws SQLException {
         orderDAO.addOrder(order);
     }
 
     public List<Order> getOrdersByCustomerId(int id) throws SQLException {
-        return orderDAO
+        return orderDAO.getOrdersByCustomerId(id);
     }
 
     public void updateOrder(Order newOrder) throws SQLException {

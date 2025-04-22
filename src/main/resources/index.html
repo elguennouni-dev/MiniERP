@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABDO-BOOT v1.0.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem 0;
+            border-bottom: 1px solid #e1e4e8;
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #2471A3;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #777;
+        }
+
+        .version {
+            display: inline-block;
+            background-color: #2471A3;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        main {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .welcome {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .welcome h2 {
+            font-size: 2.2rem;
+            color: #2471A3;
+            margin-bottom: 1rem;
+        }
+
+        .welcome p {
+            font-size: 1.1rem;
+            color: #555;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature {
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #2471A3;
+        }
+
+        .feature h3 {
+            font-size: 1.4rem;
+            color: #2471A3;
+            margin-bottom: 0.5rem;
+        }
+
+        .getting-started {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #e8f4ff;
+            border-radius: 8px;
+        }
+
+        .getting-started h3 {
+            font-size: 1.6rem;
+            color: #2471A3;
+            margin-bottom: 1rem;
+        }
+
+        pre {
+            background-color: #282c34;
+            color: #abb2bf;
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        code {
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: #777;
+            border-top: 1px solid #e1e4e8;
+        }
+
+        .author {
+            font-weight: 600;
+            color: #2471A3;
+        }
+
+        @media (max-width: 768px) {
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .logo {
+                font-size: 2.5rem;
+            }
+
+            .welcome h2 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="logo">ABDO-BOOT</div>
+        <div class="subtitle">A lightweight Java web framework</div>
+        <span class="version">v1.0.0</span>
+    </header>
+
+    <main>
+        <section class="welcome">
+            <h2>Welcome to ABDO-BOOT!</h2>
+            <p>Your modern Java web framework for building robust and scalable applications with ease.</p>
+        </section>
+
+        <section class="features">
+            <div class="feature">
+                <h3>Simple & Intuitive</h3>
+                <p>ABDO-BOOT offers a clean API that makes web development straightforward and efficient.</p>
+            </div>
+
+            <div class="feature">
+                <h3>Lightweight</h3>
+                <p>Designed to be minimal with no unnecessary dependencies, ensuring fast startup times.</p>
+            </div>
+
+            <div class="feature">
+                <h3>Highly Extensible</h3>
+                <p>Built with extensibility in mind, allowing you to integrate with your favorite libraries.</p>
+            </div>
+        </section>
+
+        <section class="getting-started">
+            <h3>Getting Started</h3>
+            <p>Add ABDO-BOOT to your project and start building:</p>
+            <pre><code>// Initialize the ABDO-BOOT application
+AbdoBoot app = new AbdoBoot();
+
+// Configure your routes
+app.get("/hello", (req, res) -> {
+    res.html("Hello, World!");
+});
+
+// Start the server
+app.start(8080);</code></pre>
+        </section>
+    </main>
+
+    <footer>
+        <p>ABDO-BOOT v1.0.0 | Created by <span class="author">EL-Guennouni Abdelilah</span></p>
+        <p>&copy; 2025 All Rights Reserved</p>
+    </footer>
+</div>
+</body>
+</html>
